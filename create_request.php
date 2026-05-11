@@ -1,6 +1,14 @@
 <?php
 include 'config.php';
 
+if (!isset($_SESSION['admin'])) {
+    header("Location: login.php");
+    exit();
+}
+?>
+<?php
+include 'config.php';
+
 $patients = mysqli_query($conn, "SELECT * FROM Patient");
 $hospitals = mysqli_query($conn, "SELECT * FROM Hospital");
 

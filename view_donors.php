@@ -1,6 +1,14 @@
 <?php
 include 'config.php';
 
+if (!isset($_SESSION['admin'])) {
+    header("Location: login.php");
+    exit();
+}
+?>
+<?php
+include 'config.php';
+
 $sql = "SELECT * FROM Donor";
 $result = mysqli_query($conn, $sql);
 ?>

@@ -1,6 +1,14 @@
 <?php
 include 'config.php';
 
+if (!isset($_SESSION['admin'])) {
+    header("Location: login.php");
+    exit();
+}
+?>
+<?php
+include 'config.php';
+
 $sql = "SELECT Donation.Donation_ID, Donor.Name, Blood.Blood_Group, Blood.Units, Donation.Date
         FROM Donation
         JOIN Donor ON Donation.Donor_ID = Donor.Donor_ID

@@ -1,12 +1,5 @@
 <?php
-$host = "localhost";
-$user = "root";
-$password = "";
-$database = "blood_bank_management_system";
+$conn = mysqli_connect("localhost", "root", "", "blood_bank_management_system");
 
-$conn = mysqli_connect($host, $user, $password, $database);
-
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+session_start();
 ?>
