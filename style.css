@@ -5,6 +5,7 @@ body {
     padding: 0;
 }
 
+/* Navbar */
 .navbar {
     background-color: #c0392b;
     padding: 15px;
@@ -20,6 +21,7 @@ body {
     font-weight: bold;
 }
 
+/* Container */
 .container {
     padding: 20px;
 }
@@ -28,23 +30,34 @@ h2 {
     color: #2c3e50;
 }
 
+/* Table */
 table {
     width: 100%;
     border-collapse: collapse;
     background: white;
+    margin-top: 20px;
 }
 
-table th {
+th, td {
+    padding: 12px;
+    text-align: center;   /* ✅ FIXED */
+}
+
+th {
     background-color: #e74c3c;
     color: white;
-    padding: 10px;
 }
 
-table td {
-    padding: 10px;
+td {
     border-bottom: 1px solid #ddd;
 }
 
+/* Zebra rows */
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Buttons */
 button {
     background-color: #27ae60;
     color: white;
