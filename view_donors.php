@@ -17,7 +17,6 @@ $result = mysqli_query($conn, $sql);
 <html>
 <head>
     <title>View Donors</title>
-    <th>Actions</th>
 </head>
 <body>
 
@@ -31,6 +30,7 @@ $result = mysqli_query($conn, $sql);
         <th>Phone</th>
         <th>Address</th>
         <th>Units Donated</th>
+        <th>Actions</th>
     </tr>
 
     <?php while($row = mysqli_fetch_assoc($result)) { ?>
