@@ -5,9 +5,6 @@ if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
     exit();
 }
-?>
-<?php
-include 'config.php';
 
 if (isset($_POST['submit'])) {
     $name = $_POST['name'];

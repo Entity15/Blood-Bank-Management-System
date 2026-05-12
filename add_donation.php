@@ -5,10 +5,6 @@ if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
     exit();
 }
-?>
-<?php
-include 'config.php';
-
 // Fetch donors for dropdown
 $donors = mysqli_query($conn, "SELECT * FROM Donor");
 
