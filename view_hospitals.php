@@ -13,12 +13,16 @@ $result = mysqli_query($conn, "SELECT * FROM Hospital");
 <html>
 <head>
     <title>View Hospitals</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<?php include 'navbar.php'; ?>   <!-- ✅ MOVE HERE -->
+
+<div class="container">
 <h2>Hospital List</h2>
 
-<table border="1" cellpadding="10">
+<table>
     <tr>
         <th>ID</th>
         <th>Name</th>
@@ -34,7 +38,7 @@ $result = mysqli_query($conn, "SELECT * FROM Hospital");
     <?php } ?>
 
 </table>
+</div>
 
 </body>
-<?php include 'navbar.php'; ?>
 </html>
