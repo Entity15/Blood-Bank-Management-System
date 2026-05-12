@@ -1,5 +1,8 @@
 <?php
 $conn = mysqli_connect("localhost", "root", "", "blood_bank_management_system");
 
-session_start();
+// Start session ONLY if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 ?>
