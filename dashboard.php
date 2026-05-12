@@ -1,11 +1,24 @@
 <?php
-include 'config.php';
+require_once 'config.php';
 
 if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
     exit();
 }
 ?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<?php include 'navbar.php'; ?>
+
+<div class="container">
 
 <h1>Blood Bank Management System</h1>
 
@@ -26,3 +39,8 @@ if (!isset($_SESSION['admin'])) {
 
     <li><a href="logout.php">Logout</a></li>
 </ul>
+
+</div>
+
+</body>
+</html>

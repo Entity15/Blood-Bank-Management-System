@@ -40,4 +40,5 @@ $result = mysqli_query($conn, "SELECT * FROM Patient");
 </table>
 
 </body>
+<?php include 'navbar.php'; ?>
 </html>

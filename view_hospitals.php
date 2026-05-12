@@ -36,4 +36,5 @@ $result = mysqli_query($conn, "SELECT * FROM Hospital");
 </table>
 
 </body>
+<?php include 'navbar.php'; ?>
 </html>

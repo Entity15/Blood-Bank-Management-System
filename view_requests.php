@@ -1,5 +1,5 @@
 <?php
-include 'config.php';
+require_once 'config.php';
 
 if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
@@ -9,33 +9,29 @@ if (!isset($_SESSION['admin'])) {
 if (isset($_GET['approve'])) {
     $id = $_GET['approve'];
 
-    // Get request details
     $req = mysqli_fetch_assoc(mysqli_query($conn, 
         "SELECT * FROM Blood_Request WHERE Request_ID=$id"));
 
     $blood = $req['Blood_Group'];
     $units = $req['Units_Required'];
 
-    // Check stock
     $stock = mysqli_fetch_assoc(mysqli_query($conn, 
         "SELECT * FROM Blood_Stock WHERE Blood_Group='$blood'"));
 
     if ($stock['Units_Available'] >= $units) {
-        // Deduct stock
         mysqli_query($conn, 
             "UPDATE Blood_Stock 
              SET Units_Available = Units_Available - $units
              WHERE Blood_Group='$blood'");
 
-        // Approve request
         mysqli_query($conn, 
             "UPDATE Blood_Request 
              SET Status='Approved' 
              WHERE Request_ID=$id");
 
-        echo "Request Approved!";
+        echo "<p style='color:green;'>Request Approved!</p>";
     } else {
-        echo "Not enough blood available!";
+        echo "<p style='color:red;'>Not enough blood available!</p>";
     }
 }
 
@@ -53,9 +49,22 @@ $result = mysqli_query($conn, "
 ");
 ?>
 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Blood Requests</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<?php include 'navbar.php'; ?>
+
+<div class="container">
+
 <h2>Blood Requests</h2>
 
-<table border="1" cellpadding="10">
+<table>
 <tr>
     <th>ID</th>
     <th>Patient</th>
@@ -76,11 +85,16 @@ $result = mysqli_query($conn, "
     <td><?php echo $row['Status']; ?></td>
     <td>
         <?php if ($row['Status'] == 'Pending') { ?>
-            <a href="?approve=<?php echo $row['Request_ID']; ?>">Approve</a> |
-            <a href="?reject=<?php echo $row['Request_ID']; ?>">Reject</a>
+            <a class="action-btn" href="?approve=<?php echo $row['Request_ID']; ?>">Approve</a>
+            <a class="action-btn" href="?reject=<?php echo $row['Request_ID']; ?>">Reject</a>
         <?php } ?>
     </td>
 </tr>
 <?php } ?>
 
 </table>
+
+</div>
+
+</body>
+</html>
