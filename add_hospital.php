@@ -1,41 +1,57 @@
 <?php
 include 'config.php';
+if (!isset($_SESSION['admin'])) { header("Location: login.php"); exit(); }
 
-if (!isset($_SESSION['admin'])) {
-    header("Location: login.php");
-    exit();
-}
+$success = $error = '';
 
 if (isset($_POST['submit'])) {
-    $name = $_POST['name'];
-    $address = $_POST['address'];
+    $name    = mysqli_real_escape_string($conn, $_POST['name']);
+    $address = mysqli_real_escape_string($conn, $_POST['address']);
 
-    $sql = "INSERT INTO Hospital (Name, Address)
-            VALUES ('$name', '$address')";
+    $sql = "INSERT INTO hospital (Name, Address) VALUES ('$name', '$address')";
 
     if (mysqli_query($conn, $sql)) {
-        echo "Hospital added successfully!";
+        $success = "Hospital <strong>$name</strong> added successfully!";
     } else {
-        echo "Error: " . mysqli_error($conn);
+        $error = "Error: " . mysqli_error($conn);
     }
 }
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Add Hospital</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Hospital – Blood Bank</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<?php include 'navbar.php'; ?>
+<div class="container">
+    <div class="page-header">
+        <h1>Register Hospital</h1>
+        <a href="view_hospitals.php" class="btn btn-secondary">← Back to Hospitals</a>
+    </div>
 
-<h2>Add Hospital</h2>
+    <?php if ($success): ?><div class="alert alert-success"><?php echo $success; ?></div><?php endif; ?>
+    <?php if ($error):   ?><div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
 
-<form method="POST">
-    Name: <input type="text" name="name" required><br><br>
-    Address: <textarea name="address"></textarea><br><br>
-
-    <button type="submit" name="submit">Add Hospital</button>
-</form>
-
+    <div class="form-card">
+        <form method="POST">
+            <div class="form-group">
+                <label>Hospital Name <span class="required">*</span></label>
+                <input type="text" name="name" required placeholder="e.g. Ibn Sina Hospital">
+            </div>
+            <div class="form-group">
+                <label>Address</label>
+                <textarea name="address" rows="3" placeholder="Full hospital address..."></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="submit" name="submit" class="btn btn-primary">Register Hospital</button>
+                <a href="view_hospitals.php" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
 </html>

@@ -1,4 +1,49 @@
-1. Clone the repository to C drive's xampp>htdocs.
-2. There should be a few files ending with the extension .sql, make a database called blood_bank_management_system in xampp, then import the latest .sql file onto there.
-3. After starting xampp as intended, if repository is placed correctly then the link to acces it would be: http://localhost/Blood%20Bank%20Management%20System/
-4. To access any files or pages, just add the file name as is at the end of the link.
+# Blood Bank Management System
+**North East University Bangladesh — CSE Department**
+
+## Setup Instructions
+
+### Requirements
+- XAMPP (or any LAMP/WAMP stack)
+- PHP 7.4+
+- MySQL / MariaDB
+
+### Steps
+
+1. **Copy project files**
+   - Place the entire `bbms_fixed` folder inside `htdocs/` (XAMPP) or your web root.
+   - Rename the folder to `Blood_Bank_Management_System` if desired.
+
+2. **Import the database**
+   - Open phpMyAdmin at `http://localhost/phpmyadmin`
+   - Click **Import**, choose `blood_bank_management_system.sql`
+   - Click **Go**
+
+3. **Configure DB connection** (if needed)
+   - Open `config.php`
+   - Change `root` / password / host if your MySQL credentials differ
+
+4. **Run the app**
+   - Visit: `http://localhost/Blood_Bank_Management_System/login.php`
+   - Login: **admin / admin123**
+
+## Default Credentials
+| Username | Password |
+|----------|----------|
+| admin    | admin123 |
+
+## Modules
+| Page | Description |
+|------|-------------|
+| dashboard.php | Overview stats |
+| add_donor / view_donors | Donor CRUD |
+| add_donation / view_donations | Record donations, auto-updates stock |
+| add_patient / view_patients | Patient records |
+| add_hospital / view_hospitals | Hospital records |
+| add_request / view_requests | Blood requests with approve/reject |
+| view_stock | Blood inventory per group |
+
+## Notes
+- Approving a request automatically deducts from `blood_stock`.
+- Recording a donation automatically increments `blood_stock`.
+- Expired blood records are highlighted in `view_donations.php`.

@@ -1,76 +1,98 @@
 <?php
 include 'config.php';
+if (!isset($_SESSION['admin'])) { header("Location: login.php"); exit(); }
 
-if (!isset($_SESSION['admin'])) {
-    header("Location: login.php");
-    exit();
-}
-
-// Fetch hospitals & patients
-$hospitals = mysqli_query($conn, "SELECT * FROM Hospital");
-$patients = mysqli_query($conn, "SELECT * FROM Patient");
+$hospitals = mysqli_query($conn, "SELECT * FROM hospital ORDER BY Name");
+$patients  = mysqli_query($conn, "SELECT * FROM patient ORDER BY Name");
+$success = $error = '';
 
 if (isset($_POST['submit'])) {
-    $hospital_id = $_POST['hospital_id'];
-    $patient_id = $_POST['patient_id'];
-    $blood_group = $_POST['blood_group'];
-    $units = $_POST['units'];
-    $date = $_POST['date'];
+    $hospital_id = (int)$_POST['hospital_id'];
+    $patient_id  = (int)$_POST['patient_id'];
+    $blood_group = mysqli_real_escape_string($conn, $_POST['blood_group']);
+    $units       = (int)$_POST['units'];
+    $date        = mysqli_real_escape_string($conn, $_POST['date']);
 
-    $sql = "INSERT INTO Request (Hospital_ID, Patient_ID, Blood_Group, Units, Request_Date)
-            VALUES ('$hospital_id', '$patient_id', '$blood_group', '$units', '$date')";
+    $sql = "INSERT INTO blood_request (Hospital_ID, Patient_ID, Blood_Group, Units_Required, Request_Date)
+            VALUES ($hospital_id, $patient_id, '$blood_group', $units, '$date')";
 
     if (mysqli_query($conn, $sql)) {
-        echo "Request created successfully!";
+        $success = "Blood request submitted successfully!";
     } else {
-        echo "Error: " . mysqli_error($conn);
+        $error = "Error: " . mysqli_error($conn);
     }
 }
 ?>
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Request Blood</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Blood Request – Blood Bank</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<?php include 'navbar.php'; ?>
+<div class="container">
+    <div class="page-header">
+        <h1>New Blood Request</h1>
+        <a href="view_requests.php" class="btn btn-secondary">← All Requests</a>
+    </div>
 
-<h2>Create Blood Request</h2>
+    <?php if ($success): ?><div class="alert alert-success"><?php echo $success; ?></div><?php endif; ?>
+    <?php if ($error):   ?><div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
 
-<form method="POST">
-
-    Hospital:
-    <select name="hospital_id" required>
-        <option value="">Select Hospital</option>
-        <?php while($h = mysqli_fetch_assoc($hospitals)) { ?>
-            <option value="<?php echo $h['Hospital_ID']; ?>">
-                <?php echo $h['Name']; ?>
-            </option>
-        <?php } ?>
-    </select><br><br>
-
-    Patient:
-    <select name="patient_id" required>
-        <option value="">Select Patient</option>
-        <?php while($p = mysqli_fetch_assoc($patients)) { ?>
-            <option value="<?php echo $p['Patient_ID']; ?>">
-                <?php echo $p['Name']; ?>
-            </option>
-        <?php } ?>
-    </select><br><br>
-
-    Blood Group:
-    <input type="text" name="blood_group" required><br><br>
-
-    Units:
-    <input type="number" name="units" required><br><br>
-
-    Date:
-    <input type="date" name="date" required><br><br>
-
-    <button type="submit" name="submit">Submit Request</button>
-
-</form>
-
+    <div class="form-card">
+        <form method="POST">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Hospital <span class="required">*</span></label>
+                    <select name="hospital_id" required>
+                        <option value="">— Select Hospital —</option>
+                        <?php while($h = mysqli_fetch_assoc($hospitals)): ?>
+                            <option value="<?php echo $h['Hospital_ID']; ?>">
+                                <?php echo htmlspecialchars($h['Name']); ?>
+                            </option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Patient <span class="required">*</span></label>
+                    <select name="patient_id" required>
+                        <option value="">— Select Patient —</option>
+                        <?php while($p = mysqli_fetch_assoc($patients)): ?>
+                            <option value="<?php echo $p['Patient_ID']; ?>">
+                                <?php echo htmlspecialchars($p['Name']); ?>
+                            </option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Blood Group <span class="required">*</span></label>
+                    <select name="blood_group" required>
+                        <option value="">— Select —</option>
+                        <?php foreach (['A+','A-','B+','B-','AB+','AB-','O+','O-'] as $bg): ?>
+                            <option value="<?php echo $bg; ?>"><?php echo $bg; ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Units Required <span class="required">*</span></label>
+                    <input type="number" name="units" min="1" required placeholder="e.g. 2">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Request Date <span class="required">*</span></label>
+                <input type="date" name="date" required value="<?php echo date('Y-m-d'); ?>">
+            </div>
+            <div class="form-actions">
+                <button type="submit" name="submit" class="btn btn-primary">Submit Request</button>
+                <a href="view_requests.php" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
 </body>
 </html>
