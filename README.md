@@ -11,8 +11,6 @@
 ### Steps
 
 1. **Copy project files**
-   - Place the entire `bbms_fixed` folder inside `htdocs/` (XAMPP) or your web root.
-   - Rename the folder to `Blood_Bank_Management_System` if desired.
 
 2. **Import the database**
    - Open phpMyAdmin at `http://localhost/phpmyadmin`
