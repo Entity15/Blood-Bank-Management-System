@@ -1,10 +1,10 @@
-# Blood Bank Management System — Final Version
+# Blood Bank Management System
 **North East University Bangladesh · CSE Department**
 
 ## Setup
-1. Copy `bbms_final/` into XAMPP `htdocs/`
+1. Copy `Blood Bank Management System` into XAMPP `htdocs/`
 2. Open phpMyAdmin → Import `blood_bank_management_system.sql`
-3. Visit `http://localhost/bbms_final/login.php`
+3. Visit `http://localhost/Blood%20Bank%20Management%20System/login.php`
 4. Login: **admin / admin123**
 
 ## Schema (9 tables)
