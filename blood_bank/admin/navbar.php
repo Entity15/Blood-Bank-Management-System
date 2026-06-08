@@ -1,6 +1,6 @@
-<?php if (!isset($_SESSION['admin'])) { header("Location: login.php"); exit(); } ?>
+<?php if (!isset($_SESSION['admin'])) { header("Location: ../login.php"); exit(); } ?>
 <nav class="navbar">
-    <div class="navbar-brand"><span class="nb-icon">🩸</span><span>Blood Bank</span></div>
+    <div class="navbar-brand"><span class="nb-icon">🩸</span><span>Blood Bank <span style="font-weight:400;opacity:.7;font-size:.85em;">Admin</span></span></div>
     <div class="navbar-links">
         <a href="dashboard.php">Dashboard</a>
         <a href="view_donors.php">Donors</a>
@@ -12,7 +12,7 @@
         <a href="view_stock.php">Stock</a>
     </div>
     <div class="navbar-user">
-        <span>👤 <?php echo htmlspecialchars($_SESSION['admin']); ?></span>
+        <span>🔒 <?php echo htmlspecialchars($_SESSION['admin']); ?></span>
         <a href="logout.php" class="btn-logout">Logout</a>
     </div>
 </nav>
