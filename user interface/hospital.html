@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Hospital page for the Blood Bank Management System with connected hospitals and a new hospital form." />
+  <title>Blood Bank Management System | Hospital</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar">
+      <a class="logo-section" href="index.html" aria-label="Blood Bank Management System home">
+        <div class="logo-circle">
+          <i class="fa-solid fa-droplet"></i>
+        </div>
+        <div class="logo-text">
+          <span class="eyebrow">BBMS</span>
+          <h1>Blood Bank Management System</h1>
+        </div>
+      </a>
+
+      <div class="nav-links" aria-label="Primary navigation">
+        <a href="index.html">Home</a>
+        <a href="hospital.html">Hospital</a>
+        <a href="donnar.html">Donnar</a>
+        <a href="about.html">About Us</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero page-hero" id="home">
+      <div class="hero-copy">
+        <span class="section-tag">Hospital network</span>
+        <h2>Track connected hospitals and add new ones when the network grows.</h2>
+        <p>
+          BBMS keeps hospital requests visible, supports emergency coordination, and shows how many
+          hospitals are already connected with us.
+        </p>
+
+        <div class="hero-actions">
+          <a class="primary-btn" href="#register">Add New Hospital</a>
+          <a class="secondary-btn" href="#connected">View Connected Hospitals</a>
+          <a class="secondary-btn" href="index.html">Home</a>
+        </div>
+
+        <div class="hero-stats" aria-label="Hospital metrics">
+          <article>
+            <strong>86</strong>
+            <span>Connected hospitals</span>
+          </article>
+          <article>
+            <strong>18</strong>
+            <span>Emergency partners</span>
+          </article>
+          <article>
+            <strong>12</strong>
+            <span>Cities covered</span>
+          </article>
+          <article>
+            <strong>15 min</strong>
+            <span>Average response</span>
+          </article>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="visual-card image-card">
+          <img src="image.jpg" alt="Hospital coordination desk" />
+        </div>
+
+        <div class="visual-card status-card">
+          <span class="status-pill">Connected hospitals</span>
+          <h3>Recent partner updates</h3>
+          <ul>
+            <li><span>City Care</span> Emergency blood request active</li>
+            <li><span>Hope Clinic</span> New partner verified today</li>
+            <li><span>LifeLine</span> O- inventory reservation made</li>
+            <li><span>Central Medical</span> Dispatch confirmed</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="connected">
+      <div class="section-heading">
+        <span class="section-tag">Connected hospitals</span>
+        <h3>Hospitals already connected with BBMS.</h3>
+        <p>Each connected hospital can raise requests and coordinate blood needs through the system.</p>
+      </div>
+
+      <div class="entity-list">
+        <article class="entity-card">
+          <div class="entity-top">
+            <h4>City General Hospital</h4>
+            <span class="entity-badge">Verified</span>
+          </div>
+          <p>24/7 trauma response and blood request coordination.</p>
+        </article>
+        <article class="entity-card">
+          <div class="entity-top">
+            <h4>Hope Medical Center</h4>
+            <span class="entity-badge">Active</span>
+          </div>
+          <p>Handles emergency surgeries and maternity support requests.</p>
+        </article>
+        <article class="entity-card">
+          <div class="entity-top">
+            <h4>LifeLine Clinic</h4>
+            <span class="entity-badge">Verified</span>
+          </div>
+          <p>Uses BBMS for urgent blood matching and record updates.</p>
+        </article>
+        <article class="entity-card">
+          <div class="entity-top">
+            <h4>Central Care Hospital</h4>
+            <span class="entity-badge">Active</span>
+          </div>
+          <p>Coordinates recurring requests with a dedicated blood desk.</p>
+        </article>
+        <article class="entity-card">
+          <div class="entity-top">
+            <h4>Sunrise Women&apos;s Hospital</h4>
+            <span class="entity-badge">Partner</span>
+          </div>
+          <p>Supports maternity and critical care blood support needs.</p>
+        </article>
+        <article class="entity-card">
+          <div class="entity-top">
+            <h4>Metro Trauma Unit</h4>
+            <span class="entity-badge">Emergency</span>
+          </div>
+          <p>Fast-response unit for accidents and high-priority cases.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="content-section page-two-col" id="register">
+      <div>
+        <div class="section-heading left-aligned">
+          <span class="section-tag">Add new hospital</span>
+          <h3>Register a hospital so it can start sending requests through BBMS.</h3>
+          <p>
+            Add hospital details, contact information, and location data to connect them with the
+            blood bank workflow.
+          </p>
+        </div>
+
+        <div class="summary-grid">
+          <article class="mini-card">
+            <strong>Secure</strong>
+            <p>Store verified hospital details in one organized place.</p>
+          </article>
+          <article class="mini-card">
+            <strong>Fast</strong>
+            <p>Speed up request creation and response handling.</p>
+          </article>
+          <article class="mini-card">
+            <strong>Connected</strong>
+            <p>Bring every partner into the same response network.</p>
+          </article>
+        </div>
+      </div>
+
+      <form class="form-card" action="#" method="post">
+        <h3>Add a hospital</h3>
+        <p>Use this form to add a new hospital partner to the system.</p>
+        <div class="form-grid">
+          <div class="input-group full">
+            <label for="hospital-name">Hospital name</label>
+            <input id="hospital-name" name="hospital-name" type="text" placeholder="Enter hospital name" />
+          </div>
+          <div class="input-group">
+            <label for="hospital-city">City</label>
+            <input id="hospital-city" name="hospital-city" type="text" placeholder="Enter city" />
+          </div>
+          <div class="input-group">
+            <label for="hospital-phone">Contact number</label>
+            <input id="hospital-phone" name="hospital-phone" type="tel" placeholder="Enter phone number" />
+          </div>
+          <div class="input-group full">
+            <label for="hospital-contact">Contact person</label>
+            <input id="hospital-contact" name="hospital-contact" type="text" placeholder="Enter contact person" />
+          </div>
+          <div class="input-group full">
+            <label for="hospital-address">Address</label>
+            <textarea id="hospital-address" name="hospital-address" placeholder="Enter hospital address"></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="primary-btn" type="submit">Add Hospital</button>
+          <a class="secondary-btn" href="#connected">Review connected hospitals</a>
+        </div>
+        <p class="section-note">This form is ready for backend connection when you want to save records.</p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Blood Bank Management System</p>
+    <span>Donate blood, save lives.</span>
+  </footer>
+</body>
+</html>

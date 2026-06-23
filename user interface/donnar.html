@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Donor page for the Blood Bank Management System with active donors and a self-registration form." />
+  <title>Blood Bank Management System | Donnar</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="navbar">
+      <a class="logo-section" href="index.html" aria-label="Blood Bank Management System home">
+        <div class="logo-circle">
+          <i class="fa-solid fa-droplet"></i>
+        </div>
+        <div class="logo-text">
+          <span class="eyebrow">BBMS</span>
+          <h1>Blood Bank Management System</h1>
+        </div>
+      </a>
+
+      <div class="nav-links" aria-label="Primary navigation">
+        <a href="index.html">Home</a>
+        <a href="hospital.html">Hospital</a>
+        <a href="donnar.html">Donnar</a>
+        <a href="about.html">About Us</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero page-hero" id="home">
+      <div class="hero-copy">
+        <span class="section-tag">Donor page</span>
+        <h2>See active donors and let new donors register themselves quickly.</h2>
+        <p>
+          Donor records help BBMS match the right blood group to the right request. Anyone can add
+          themselves as a donor and help the network respond faster.
+        </p>
+
+        <div class="hero-actions">
+          <a class="primary-btn" href="#register">Add Yourself as Donnar</a>
+          <a class="secondary-btn" href="#active">View Active Donors</a>
+          <a class="secondary-btn" href="index.html">Home</a>
+        </div>
+
+        <div class="hero-stats" aria-label="Donor metrics">
+          <article>
+            <strong>1,200+</strong>
+            <span>Total donors</span>
+          </article>
+          <article>
+            <strong>380</strong>
+            <span>Active donors</span>
+          </article>
+          <article>
+            <strong>42</strong>
+            <span>Scheduled today</span>
+          </article>
+          <article>
+            <strong>18</strong>
+            <span>Donation cities</span>
+          </article>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="visual-card image-card">
+          <img src="image.jpg" alt="Volunteer donors in a blood donation center" />
+        </div>
+
+        <div class="visual-card status-card">
+          <span class="status-pill">Active donors</span>
+          <h3>Recent donor updates</h3>
+          <ul>
+            <li><span>A+</span> Available for matching</li>
+            <li><span>O-</span> Reserved for emergency calls</li>
+            <li><span>B+</span> Appointment confirmed</li>
+            <li><span>AB+</span> New donor ready to join</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="content-section" id="active">
+      <div class="section-heading">
+        <span class="section-tag">Active donors</span>
+        <h3>Donors already supporting the blood bank.</h3>
+        <p>These donors are active in the system and can be contacted when matching is required.</p>
+      </div>
+
+      <div class="entity-list">
+        <article class="entity-card">
+          <div class="entity-top">
+            <h4>Ayesha Khan</h4>
+            <span class="entity-badge">A+</span>
+          </div>
+          <p>Available for scheduled donations in the western zone.</p>
+        </article>
+        <article class="entity-card">
+          <div class="entity-top">
+            <h4>Rahul Sharma</h4>
+            <span class="entity-badge">O-</span>
+          </div>
+          <p>Priority donor for emergency cases and rare blood needs.</p>
+        </article>
+        <article class="entity-card">
+          <div class="entity-top">
+            <h4>Sana Ali</h4>
+            <span class="entity-badge">B+</span>
+          </div>
+          <p>Regular donor with a confirmed availability window.</p>
+        </article>
+        <article class="entity-card">
+          <div class="entity-top">
+            <h4>Imran Malik</h4>
+            <span class="entity-badge">A-</span>
+          </div>
+          <p>Standby donor for hospital requests in the city center.</p>
+        </article>
+        <article class="entity-card">
+          <div class="entity-top">
+            <h4>Noor Fatima</h4>
+            <span class="entity-badge">O+</span>
+          </div>
+          <p>Active donor with flexible availability this month.</p>
+        </article>
+        <article class="entity-card">
+          <div class="entity-top">
+            <h4>Arif Hussain</h4>
+            <span class="entity-badge">AB+</span>
+          </div>
+          <p>New donor added to the matching pool for general requests.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="content-section page-two-col" id="register">
+      <div>
+        <div class="section-heading left-aligned">
+          <span class="section-tag">Register yourself</span>
+          <h3>Join the donor pool and help save lives through BBMS.</h3>
+          <p>
+            Fill in your details so the team can contact you when your blood group is needed.
+          </p>
+        </div>
+
+        <div class="summary-grid">
+          <article class="mini-card">
+            <strong>Easy</strong>
+            <p>Simple donor sign-up that anyone can complete quickly.</p>
+          </article>
+          <article class="mini-card">
+            <strong>Trusted</strong>
+            <p>Records stay organized for safe and reliable follow-up.</p>
+          </article>
+          <article class="mini-card">
+            <strong>Helpful</strong>
+            <p>Every registered donor can make a real difference in emergencies.</p>
+          </article>
+        </div>
+      </div>
+
+      <form class="form-card" action="#" method="post">
+        <h3>Add yourself as a donor</h3>
+        <p>Enter your donor details and availability to join the system.</p>
+        <div class="form-grid">
+          <div class="input-group full">
+            <label for="donor-name">Full name</label>
+            <input id="donor-name" name="donor-name" type="text" placeholder="Enter your name" />
+          </div>
+          <div class="input-group">
+            <label for="donor-blood-group">Blood group</label>
+            <select id="donor-blood-group" name="donor-blood-group">
+              <option value="">Select blood group</option>
+              <option>A+</option>
+              <option>A-</option>
+              <option>B+</option>
+              <option>B-</option>
+              <option>O+</option>
+              <option>O-</option>
+              <option>AB+</option>
+              <option>AB-</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="donor-phone">Phone number</label>
+            <input id="donor-phone" name="donor-phone" type="tel" placeholder="Enter phone number" />
+          </div>
+          <div class="input-group">
+            <label for="donor-city">City</label>
+            <input id="donor-city" name="donor-city" type="text" placeholder="Enter city" />
+          </div>
+          <div class="input-group">
+            <label for="donor-availability">Availability</label>
+            <select id="donor-availability" name="donor-availability">
+              <option value="">Select availability</option>
+              <option>Weekdays</option>
+              <option>Weekends</option>
+              <option>Any time</option>
+              <option>Emergency only</option>
+            </select>
+          </div>
+          <div class="input-group full">
+            <label for="donor-notes">Notes</label>
+            <textarea id="donor-notes" name="donor-notes" placeholder="Add any notes about your health or availability"></textarea>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="primary-btn" type="submit">Add Donnar</button>
+          <a class="secondary-btn" href="#active">Review active donors</a>
+        </div>
+        <p class="section-note">The form is ready to connect with a backend when you want to store real donor records.</p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Blood Bank Management System</p>
+    <span>Donate blood, save lives.</span>
+  </footer>
+</body>
+</html>

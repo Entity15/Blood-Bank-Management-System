@@ -1,0 +1,94 @@
+{
+    "tables": [
+        {
+            "table_name": "admin",
+            "columns": [
+                {
+                    "column_name": "Admin_ID",
+                    "data_type": "int(11"
+                }
+            ]
+        },
+        {
+            "table_name": "staff",
+            "columns": [
+                {
+                    "column_name": "Staff_ID",
+                    "data_type": "int(11"
+                }
+            ]
+        },
+        {
+            "table_name": "donor",
+            "columns": [
+                {
+                    "column_name": "Donor_ID",
+                    "data_type": "int(11"
+                }
+            ]
+        },
+        {
+            "table_name": "blood",
+            "columns": [
+                {
+                    "column_name": "Blood_ID",
+                    "data_type": "int(11"
+                }
+            ]
+        },
+        {
+            "table_name": "blood_stock",
+            "columns": [
+                {
+                    "column_name": "Blood_Group",
+                    "data_type": "varchar(5"
+                }
+            ]
+        },
+        {
+            "table_name": "donation",
+            "columns": [
+                {
+                    "column_name": "Donation_ID",
+                    "data_type": "int(11"
+                }
+            ]
+        },
+        {
+            "table_name": "hospital",
+            "columns": [
+                {
+                    "column_name": "Hospital_ID",
+                    "data_type": "int(11"
+                }
+            ]
+        },
+        {
+            "table_name": "contract",
+            "columns": [
+                {
+                    "column_name": "Contract_ID",
+                    "data_type": "int(11"
+                }
+            ]
+        },
+        {
+            "table_name": "patient",
+            "columns": [
+                {
+                    "column_name": "Patient_ID",
+                    "data_type": "int(11"
+                }
+            ]
+        },
+        {
+            "table_name": "blood_request",
+            "columns": [
+                {
+                    "column_name": "Request_ID",
+                    "data_type": "int(11"
+                }
+            ]
+        }
+    ]
+}
