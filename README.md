@@ -3,7 +3,7 @@
 
 ## Folder Structure
 ```
-blood_bank/
+Blood Bank Management System/
 ├── index.php                          ← Entry point (redirects to visitor home)
 ├── login.php                          ← UNIFIED LOGIN (admin + user in one form)
 ├── blood_bank_management_system.sql   ← Complete database (import this)
@@ -25,12 +25,12 @@ blood_bank/
 ```
 
 ## Setup
-1. Copy `blood_bank/` into XAMPP `htdocs/`
+1. Copy `Blood Bank Management System/` into XAMPP `htdocs/`
 2. Open phpMyAdmin → Import `blood_bank_management_system.sql`
-3. Visit `http://localhost/blood_bank/`
+3. Visit `http://localhost/Blood%20Bank%20Management%20System/`
 
 ## Login Flow
-All logins go through **one page**: `http://localhost/blood_bank/login.php`
+All logins go through **one page**: `http://localhost/Blood%20Bank%20Management%20System/login.php`
 
 | Who       | Credential            | Password   | Goes to             |
 |-----------|-----------------------|------------|---------------------|
