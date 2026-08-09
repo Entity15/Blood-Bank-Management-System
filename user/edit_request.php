@@ -154,12 +154,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <select name="blood_group" class="form-select" required>
                                 <option value="">— Select —</option>
                                 <?php foreach(['A+','A-','B+','B-','AB+','AB-','O+','O-'] as $g):
+<<<<<<< HEAD
                                     $sel = ($req['Blood_Group'] === $g) ? 'selected' : '';
                                 ?>
                                 <option value="<?= $g ?>" <?= $sel ?>><?= $g ?></option>
                                 <?php endforeach; ?>
                             </select>
                             <p class="form-hint">Requests for groups currently out of stock will be blocked on submission — check the live stock panel to the right.</p>
+=======
+                                    $avail = $stock[$g] ?? 0;
+                                    $sel   = ($req['Blood_Group'] === $g) ? 'selected' : '';
+                                    $warn  = $avail === 0 ? ' ⚠ Out of stock' : ($avail < 5 ? " ($avail units – low)" : " ($avail units)");
+                                ?>
+                                <option value="<?= $g ?>" <?= $sel ?>><?= $g ?><?= $warn ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            <p class="form-hint">Stock levels shown — requests for out-of-stock groups will be blocked.</p>
+>>>>>>> 414c7de8f4fcf70468b3105d2807f68bd9842592
                         </div>
                         <div class="form-group">
                             <label class="form-label">Units Required <span class="req">*</span></label>
