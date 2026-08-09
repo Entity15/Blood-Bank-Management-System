@@ -63,7 +63,9 @@ $result = mysqli_query($conn,"
     <table><thead><tr><th>ID</th><th>Patient</th><th>Disease</th><th>Hospital</th><th>Blood Group</th><th>Units</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead>
     <tbody>
     <?php $n=0; while($r=mysqli_fetch_assoc($result)): $n++;
-        $sc=$r['Status']==='Approved'?'s-ok':($r['Status']==='Rejected'?'s-critical':'s-warn');
+        $sc = $r['Status']==='Approved'  ? 's-ok'
+            : ($r['Status']==='Rejected' ? 's-critical'
+            : ($r['Status']==='Cancelled'? 's-neutral' : 's-warn'));
     ?>
     <tr>
         <td><?php echo $r['Request_ID']; ?></td>

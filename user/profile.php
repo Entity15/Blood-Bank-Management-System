@@ -13,7 +13,10 @@ $row = mysqli_fetch_assoc(mysqli_query($conn,
 if ($_SERVER['REQUEST_METHOD']==='POST') {
     $name  = mysqli_real_escape_string($conn, trim($_POST['full_name']));
     $phone = mysqli_real_escape_string($conn, trim($_POST['phone']??''));
-    $bg    = mysqli_real_escape_string($conn, $_POST['blood_group']??'');
+    // Blood group can only be SET once (when it's currently empty). Once a value
+    // exists in the database it is permanent and cannot be changed from this form,
+    // no matter what is submitted in the POST data.
+    $bg = $row['Blood_Group'] ?: mysqli_real_escape_string($conn, $_POST['blood_group'] ?? '');
     $addr  = mysqli_real_escape_string($conn, trim($_POST['address']??''));
     $hid   = (int)($_POST['hospital_id']??0);
 
@@ -124,13 +127,19 @@ $my_approved = mysqli_fetch_row(mysqli_query($conn,"SELECT COUNT(*) FROM request
                         </div>
                         <div class="form-group">
                             <label class="form-label">Blood Group</label>
-                            <select name="blood_group" class="form-select">
-                                <option value="">— Unknown —</option>
-                                <?php foreach(['A+','A-','B+','B-','AB+','AB-','O+','O-'] as $g):
-                                    $sel=($row['Blood_Group']===$g)?'selected':''; ?>
-                                <option <?= $sel ?>><?= $g ?></option>
-                                <?php endforeach; ?>
-                            </select>
+                            <?php if ($row['Blood_Group']): ?>
+                                <input type="text" class="form-input" value="<?= htmlspecialchars($row['Blood_Group']) ?>" disabled style="opacity:.6;cursor:not-allowed;font-weight:700;">
+                                <p class="form-hint">Blood group is permanent once set and cannot be edited.</p>
+                            <?php else: ?>
+                                <select name="blood_group" class="form-select">
+                                    <option value="">— Unknown —</option>
+                                    <?php foreach(['A+','A-','B+','B-','AB+','AB-','O+','O-'] as $g):
+                                        $sel=($row['Blood_Group']===$g)?'selected':''; ?>
+                                    <option <?= $sel ?>><?= $g ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <p class="form-hint">You can only set this once — choose carefully.</p>
+                            <?php endif; ?>
                         </div>
                     </div>
                     <div class="form-group">
