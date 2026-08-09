@@ -46,6 +46,15 @@ a { text-decoration: none; color: inherit; }
 .btn-logout { background: rgba(255,255,255,.15); color: #fff; border: none; padding: 6px 14px; border-radius: 7px; font-family: inherit; font-size: .82rem; font-weight: 500; cursor: pointer; transition: background .15s; text-decoration: none; display: inline-block; }
 .btn-logout:hover { background: rgba(255,255,255,.26); }
 
+/* Hamburger toggle — hidden on desktop, shown at the mobile breakpoint below */
+.navbar-toggle { display: none; flex-direction: column; justify-content: center; gap: 5px; width: 34px; height: 34px; background: rgba(255,255,255,.12); border: none; border-radius: 7px; cursor: pointer; flex-shrink: 0; }
+.navbar-toggle span { display: block; width: 18px; height: 2px; background: #fff; margin: 0 auto; border-radius: 2px; transition: transform .2s, opacity .2s; }
+.navbar-toggle:hover { background: rgba(255,255,255,.22); }
+.navbar.nav-open .navbar-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.navbar.nav-open .navbar-toggle span:nth-child(2) { opacity: 0; }
+.navbar.nav-open .navbar-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.navbar-scrim { display: none; }
+
 /* LAYOUT */
 .page-wrap { max-width: 1120px; margin: 0 auto; padding: 36px 24px 64px; }
 
@@ -91,6 +100,7 @@ a { text-decoration: none; color: inherit; }
 .pill.pending  { background: var(--amber-light);   color: var(--amber); }
 .pill.approved { background: var(--emerald-light); color: var(--emerald); }
 .pill.rejected { background: var(--ruby-light);    color: var(--ruby); }
+.pill.cancelled { background: var(--ivory-2);       color: var(--muted); }
 .pill.valid    { background: var(--emerald-light); color: var(--emerald); }
 .pill.expiring { background: var(--amber-light);   color: var(--amber); }
 .pill.expired  { background: var(--ruby-light);    color: var(--ruby); }
@@ -124,6 +134,8 @@ a { text-decoration: none; color: inherit; }
 .btn-primary { background: var(--teal);       color: #fff; }
 .btn-ghost   { background: var(--ivory-2);    color: var(--ink-soft); }
 .btn-full    { width: 100%; justify-content: center; padding: 13px; }
+.btn-sm      { padding: 5px 10px; font-size: .74rem; }
+.btn-danger  { background: var(--ruby-light); color: var(--ruby); }
 
 /* ALERTS */
 .alert { padding: 12px 16px; border-radius: var(--r); margin-bottom: 20px; font-size: .875rem; font-weight: 500; }
@@ -177,8 +189,40 @@ body.auth-body { background: linear-gradient(145deg, #0a3a3a 0%, var(--teal) 55%
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
-    .navbar { padding: 0 14px; }
-    .navbar-links { display: none; }
+    .navbar { padding: 0 14px; flex-wrap: wrap; }
+    .navbar-toggle { display: flex; }
+
+    /* Links + user info collapse into a dropdown panel under the bar,
+       opened by the hamburger button (toggles the .nav-open class). */
+    .navbar-links,
+    .navbar-user {
+        display: none;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 4px;
+    }
+    .navbar.nav-open .navbar-links,
+    .navbar.nav-open .navbar-user {
+        display: flex;
+    }
+    .navbar.nav-open {
+        height: auto;
+        padding-bottom: 14px;
+        align-items: flex-start;
+    }
+    .navbar-links { order: 3; margin-top: 8px; }
+    .navbar-user  { order: 4; margin-top: 8px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,.15); flex-direction: row; justify-content: space-between; }
+    .nav-link { padding: 10px 12px; border-radius: 7px; }
+    .navbar-toggle { order: 2; }
+
+    .navbar-scrim {
+        display: none;
+        position: fixed; inset: 62px 0 0 0; z-index: 190;
+        background: rgba(0,0,0,.25);
+    }
+    .navbar.nav-open ~ .navbar-scrim { display: block; }
+
     .form-row { grid-template-columns: 1fr; }
     .profile-grid { grid-template-columns: 1fr; }
     .page-wrap { padding: 24px 16px 48px; }
@@ -187,6 +231,11 @@ body.auth-body { background: linear-gradient(145deg, #0a3a3a 0%, var(--teal) 55%
     .blood-grid { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
     .auth-box { padding: 36px 24px; margin: 16px; }
     .form-card { padding: 24px 18px; }
+}
+
+@media (max-width: 480px) {
+    .navbar-user { flex-direction: column; align-items: stretch; gap: 8px; }
+    .btn-logout { text-align: center; }
 }
 
 /* Missing pill variant */

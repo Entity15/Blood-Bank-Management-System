@@ -31,4 +31,8 @@ function nl($file, $label, $cur) {
         </div>
         <a href="logout.php" class="btn-logout">Logout</a>
     </div>
+    <button type="button" class="navbar-toggle" aria-label="Toggle menu" aria-expanded="false" onclick="document.querySelector('.navbar').classList.toggle('nav-open'); this.setAttribute('aria-expanded', document.querySelector('.navbar').classList.contains('nav-open'));">
+        <span></span><span></span><span></span>
+    </button>
 </nav>
+<div class="navbar-scrim" onclick="document.querySelector('.navbar').classList.remove('nav-open'); document.querySelector('.navbar-toggle').setAttribute('aria-expanded','false');"></div>

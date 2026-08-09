@@ -114,6 +114,7 @@ tr.row-expiring td{background:#fffbf0}
 .s-ok{background:var(--green-light);color:var(--green)}
 .s-warn{background:var(--orange-light);color:var(--orange)}
 .s-critical{background:var(--red-light);color:var(--red-dark)}
+.s-neutral{background:var(--gray-100);color:var(--gray-600)}
 
 /* ACTION BUTTONS IN TABLE */
 .abtn{display:inline-block;padding:4px 11px;border-radius:5px;font-size:.78rem;font-weight:600;margin-right:4px;transition:filter .15s}

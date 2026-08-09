@@ -37,6 +37,14 @@ $total = mysqli_fetch_row(mysqli_query($conn, "SELECT COUNT(*) FROM request r $w
 </div>
 
 <div class="page-wrap">
+    <?php if (!empty($_SESSION['flash_ok'])): ?>
+        <div class="alert alert-ok"><?= htmlspecialchars($_SESSION['flash_ok']) ?></div>
+        <?php unset($_SESSION['flash_ok']); ?>
+    <?php endif; ?>
+    <?php if (!empty($_SESSION['flash_err'])): ?>
+        <div class="alert alert-err"><?= htmlspecialchars($_SESSION['flash_err']) ?></div>
+        <?php unset($_SESSION['flash_err']); ?>
+    <?php endif; ?>
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
         <div>
             <div class="sec-eyebrow">History</div>
@@ -49,7 +57,7 @@ $total = mysqli_fetch_row(mysqli_query($conn, "SELECT COUNT(*) FROM request r $w
     <form method="GET" class="search-row" style="margin-bottom:20px;">
         <select name="status" class="form-select" style="max-width:160px;">
             <option value="">All Statuses</option>
-            <?php foreach(['Pending','Approved','Rejected'] as $s):
+            <?php foreach(['Pending','Approved','Rejected','Cancelled'] as $s):
                 $sel = ($status_filter===$s)?'selected':''; ?>
             <option <?= $sel ?>><?= $s ?></option>
             <?php endforeach; ?>
@@ -80,6 +88,7 @@ $total = mysqli_fetch_row(mysqli_query($conn, "SELECT COUNT(*) FROM request r $w
                     <th>Date Requested</th>
                     <th>Status</th>
                     <th>Progress</th>
+                    <th style="width:100px;">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -112,11 +121,26 @@ $total = mysqli_fetch_row(mysqli_query($conn, "SELECT COUNT(*) FROM request r $w
                         </div>
                     <?php elseif ($r['Status'] === 'Rejected'): ?>
                         <span style="font-size:.82rem;color:var(--ruby);">✗ Insufficient stock at time of review</span>
+                    <?php elseif ($r['Status'] === 'Cancelled'): ?>
+                        <span style="font-size:.82rem;color:var(--muted);">Cancelled by you</span>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <?php if ($r['Status'] === 'Pending'): ?>
+                        <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
+                            <a href="edit_request.php?id=<?= $r['Request_ID'] ?>" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;">Edit</a>
+                            <form method="POST" action="cancel_request.php" onsubmit="return confirm('Cancel this blood request? This cannot be undone.');" style="width:100%;">
+                                <button type="submit" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;">Cancel</button>
+                                <input type="hidden" name="request_id" value="<?= $r['Request_ID'] ?>">
+                            </form>
+                        </div>
+                    <?php else: ?>
+                        <span style="color:var(--muted);font-size:.8rem;">—</span>
                     <?php endif; ?>
                 </td>
             </tr>
             <?php endwhile; if ($n === 0): ?>
-            <tr><td colspan="9" class="empty-row">
+            <tr><td colspan="10" class="empty-row">
                 No requests found.
                 <?php if (!$status_filter && !$bg_filter): ?>
                     <a href="new_request.php" style="color:var(--teal);font-weight:600;">Make your first request →</a>

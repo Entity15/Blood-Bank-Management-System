@@ -4,9 +4,26 @@ require_user_login();
 $u   = current_user();
 $uid = $u['id'];
 
-$error = $success = '';
+$rid = (int)($_GET['id'] ?? $_POST['request_id'] ?? 0);
 
-// Blood stock availability
+// Load the request and make sure it belongs to this user
+$req = mysqli_fetch_assoc(mysqli_query($conn,
+    "SELECT * FROM request WHERE Request_ID=$rid AND User_ID=$uid"));
+
+if (!$req) {
+    header("Location: my_requests.php"); exit();
+}
+
+// Only a Pending request can still be edited — once an admin has approved
+// or rejected it, the record is locked.
+if ($req['Status'] !== 'Pending') {
+    $_SESSION['flash_err'] = "This request has already been reviewed and can no longer be edited.";
+    header("Location: my_requests.php"); exit();
+}
+
+$error = '';
+
+// Blood stock availability (same logic as new_request.php)
 $stock = [];
 $stock_res = mysqli_query($conn, "
     SELECT b.Blood_Group,
@@ -20,81 +37,73 @@ $stock_res = mysqli_query($conn, "
     GROUP BY b.Blood_Group");
 while ($r = mysqli_fetch_assoc($stock_res)) $stock[$r['Blood_Group']] = max(0,(int)$r['Available']);
 
-// Load hospitals (only those with active contracts)
 $hospitals = mysqli_query($conn, "
-    SELECT h.Hospital_ID, h.Name, h.City
-    FROM hospital h
-    JOIN contract c ON h.Hospital_ID=c.Hospital_ID
-    WHERE c.End_Date >= CURDATE()
-    ORDER BY h.Name");
-
-// If no active contract hospitals, fall back to all
-$hcount = mysqli_num_rows($hospitals);
-if ($hcount === 0) {
-    $hospitals = mysqli_query($conn, "SELECT Hospital_ID, Name, City FROM hospital ORDER BY Name");
-}
-
-// Patients
+    SELECT h.Hospital_ID, h.Name, h.City FROM hospital h
+    LEFT JOIN contract c ON h.Hospital_ID=c.Hospital_ID
+    WHERE c.End_Date >= CURDATE() OR c.End_Date IS NULL
+    GROUP BY h.Hospital_ID ORDER BY h.Name");
 $patients = mysqli_query($conn, "SELECT Patient_Disease_ID, Name, Disease_Name FROM patient ORDER BY Name, Disease_Name");
 $pcount   = mysqli_num_rows($patients);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $hid = (int)$_POST['hospital_id'];
-    $pid = (int)$_POST['patient_id'];
-    $bg  = mysqli_real_escape_string($conn, $_POST['blood_group']);
-    $u_n = (int)$_POST['units'];
-    $dt  = mysqli_real_escape_string($conn, $_POST['request_date']);
-    $note= mysqli_real_escape_string($conn, trim($_POST['notes'] ?? ''));
+    $hid  = (int)$_POST['hospital_id'];
+    $pid  = (int)$_POST['patient_id'];
+    $bg   = mysqli_real_escape_string($conn, $_POST['blood_group']);
+    $u_n  = (int)$_POST['units'];
+    $dt   = mysqli_real_escape_string($conn, $_POST['request_date']);
 
     if (!$hid || !$pid || !$bg || !$u_n || !$dt) {
         $error = "All required fields must be filled in.";
     } elseif ($u_n < 1 || $u_n > 20) {
         $error = "Units must be between 1 and 20.";
     } else {
-        // Check stock
         $avail = $stock[$bg] ?? 0;
         if ($avail === 0) {
-            $error = "Sorry, there is currently no $bg blood in stock. Your request cannot be submitted at this time.";
+            $error = "Sorry, there is currently no $bg blood in stock. Your request cannot be updated to this group right now.";
         } else {
-            $r = mysqli_query($conn,
-                "INSERT INTO request (Patient_ID, Hospital_ID, Blood_Group, Units, Request_Date, Status, User_ID)
-                 VALUES ($pid, $hid, '$bg', $u_n, '$dt', 'Pending', $uid)");
-            if ($r) {
-                $success = "Your blood request has been submitted and is now pending admin review.";
-            } else {
-                // Try without User_ID in case the column doesn't exist yet
-                $r2 = mysqli_query($conn,
-                    "INSERT INTO request (Patient_ID, Hospital_ID, Blood_Group, Units, Request_Date, Status)
-                     VALUES ($pid, $hid, '$bg', $u_n, '$dt', 'Pending')");
-                if ($r2) {
-                    $success = "Your blood request has been submitted and is now pending admin review.";
-                } else {
-                    $error = "Submission failed: " . mysqli_error($conn);
-                }
+            // Re-confirm it's still Pending and still ours right before writing (avoid a race
+            // where an admin approved/rejected it between page load and submit).
+            $still = mysqli_fetch_assoc(mysqli_query($conn,
+                "SELECT Status FROM request WHERE Request_ID=$rid AND User_ID=$uid"));
+            if (!$still || $still['Status'] !== 'Pending') {
+                $_SESSION['flash_err'] = "This request was just reviewed by an admin and can no longer be edited.";
+                header("Location: my_requests.php"); exit();
             }
+            mysqli_query($conn, "
+                UPDATE request
+                SET Patient_ID=$pid, Hospital_ID=$hid, Blood_Group='$bg', Units=$u_n, Request_Date='$dt'
+                WHERE Request_ID=$rid AND User_ID=$uid AND Status='Pending'");
+            $_SESSION['flash_ok'] = "Your request has been updated.";
+            header("Location: my_requests.php"); exit();
         }
     }
-}
 
-// Reload selects after POST
-$hospitals = mysqli_query($conn, "
-    SELECT h.Hospital_ID, h.Name, h.City FROM hospital h
-    LEFT JOIN contract c ON h.Hospital_ID=c.Hospital_ID
-    WHERE c.End_Date >= CURDATE() OR c.End_Date IS NULL
-    GROUP BY h.Hospital_ID ORDER BY h.Name");
-$patients  = mysqli_query($conn, "SELECT Patient_Disease_ID, Name, Disease_Name FROM patient ORDER BY Name, Disease_Name");
+    // Keep the request array in sync with the failed submission so the form re-shows what was typed
+    $req = array_merge($req, [
+        'Hospital_ID' => $hid, 'Patient_ID' => $pid, 'Blood_Group' => $bg,
+        'Units' => $u_n, 'Request_Date' => $dt,
+    ]);
+
+    // Reload selects after failed POST
+    $hospitals = mysqli_query($conn, "
+        SELECT h.Hospital_ID, h.Name, h.City FROM hospital h
+        LEFT JOIN contract c ON h.Hospital_ID=c.Hospital_ID
+        WHERE c.End_Date >= CURDATE() OR c.End_Date IS NULL
+        GROUP BY h.Hospital_ID ORDER BY h.Name");
+    $patients = mysqli_query($conn, "SELECT Patient_Disease_ID, Name, Disease_Name FROM patient ORDER BY Name, Disease_Name");
+}
 ?>
 <!DOCTYPE html><html lang="en"><head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>New Blood Request – LifeBank</title>
+<title>Edit Blood Request – LifeBank</title>
 <link rel="stylesheet" href="user_style.css">
 </head><body>
 <?php include 'navbar.php'; ?>
 
 <div class="page-hero">
     <div class="page-hero-inner">
-        <h1>New Blood Request</h1>
-        <p>Submit a request for blood on behalf of a registered patient. An admin will review and approve it.</p>
+        <h1>Edit Blood Request</h1>
+        <p>You can update this request until an admin reviews it. Once it's approved or rejected, it's locked.</p>
     </div>
 </div>
 
@@ -103,29 +112,20 @@ $patients  = mysqli_query($conn, "SELECT Patient_Disease_ID, Name, Disease_Name 
 
         <!-- FORM -->
         <div style="flex:1;min-width:300px;">
-            <?php if ($success): ?>
-            <div class="alert alert-ok" style="font-size:1rem;">
-                ✅ <?= $success ?><br>
-                <div style="margin-top:10px;display:flex;gap:10px;">
-                    <a href="my_requests.php" class="btn btn-primary" style="padding:8px 18px;font-size:.85rem;">View My Requests</a>
-                    <a href="new_request.php" class="btn btn-ghost"  style="padding:8px 18px;font-size:.85rem;">Make Another</a>
-                </div>
-            </div>
-            <?php endif; ?>
             <?php if ($error): ?>
             <div class="alert alert-err"><?= htmlspecialchars($error) ?></div>
             <?php endif; ?>
 
-            <?php if (!$success): ?>
             <div class="form-card">
                 <form method="POST">
+                    <input type="hidden" name="request_id" value="<?= $req['Request_ID'] ?>">
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">Hospital <span class="req">*</span></label>
                             <select name="hospital_id" class="form-select" required>
                                 <option value="">— Select Hospital —</option>
                                 <?php while ($h = mysqli_fetch_assoc($hospitals)):
-                                    $sel = (($_POST['hospital_id'] ?? 0) == $h['Hospital_ID']) ? 'selected' : ''; ?>
+                                    $sel = ($req['Hospital_ID'] == $h['Hospital_ID']) ? 'selected' : ''; ?>
                                 <option value="<?= $h['Hospital_ID'] ?>" <?= $sel ?>>
                                     <?= htmlspecialchars($h['Name']) ?><?= $h['City'] ? ' · '.$h['City'] : '' ?>
                                 </option>
@@ -137,7 +137,7 @@ $patients  = mysqli_query($conn, "SELECT Patient_Disease_ID, Name, Disease_Name 
                             <select name="patient_id" class="form-select" required>
                                 <option value="">— Select Patient —</option>
                                 <?php while ($p = mysqli_fetch_assoc($patients)):
-                                    $sel = (($_POST['patient_id'] ?? 0) == $p['Patient_Disease_ID']) ? 'selected' : ''; ?>
+                                    $sel = ($req['Patient_ID'] == $p['Patient_Disease_ID']) ? 'selected' : ''; ?>
                                 <option value="<?= $p['Patient_Disease_ID'] ?>" <?= $sel ?>>
                                     <?= htmlspecialchars($p['Name']) ?> — <?= htmlspecialchars($p['Disease_Name']) ?>
                                 </option>
@@ -146,16 +146,15 @@ $patients  = mysqli_query($conn, "SELECT Patient_Disease_ID, Name, Disease_Name 
                                 <option disabled>No patients registered yet</option>
                                 <?php endif; ?>
                             </select>
-                            <p class="form-hint">Patient must be pre-registered by a blood bank administrator.</p>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">Blood Group Required <span class="req">*</span></label>
-                            <select name="blood_group" class="form-select" required id="bg-select">
+                            <select name="blood_group" class="form-select" required>
                                 <option value="">— Select —</option>
                                 <?php foreach(['A+','A-','B+','B-','AB+','AB-','O+','O-'] as $g):
-                                    $sel = (($_POST['blood_group'] ?? '') === $g) ? 'selected' : '';
+                                    $sel = ($req['Blood_Group'] === $g) ? 'selected' : '';
                                 ?>
                                 <option value="<?= $g ?>" <?= $sel ?>><?= $g ?></option>
                                 <?php endforeach; ?>
@@ -165,26 +164,21 @@ $patients  = mysqli_query($conn, "SELECT Patient_Disease_ID, Name, Disease_Name 
                         <div class="form-group">
                             <label class="form-label">Units Required <span class="req">*</span></label>
                             <input type="number" name="units" class="form-input" min="1" max="20" required
-                                   value="<?= htmlspecialchars($_POST['units'] ?? '') ?>">
+                                   value="<?= htmlspecialchars($req['Units']) ?>">
                             <p class="form-hint">Maximum 20 units per request.</p>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Request Date <span class="req">*</span></label>
                         <input type="date" name="request_date" class="form-input"
-                               value="<?= htmlspecialchars($_POST['request_date'] ?? date('Y-m-d')) ?>" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Additional Notes</label>
-                        <textarea name="notes" class="form-textarea" placeholder="Any urgency details, doctor's name, etc."><?= htmlspecialchars($_POST['notes'] ?? '') ?></textarea>
+                               value="<?= htmlspecialchars($req['Request_Date']) ?>" required>
                     </div>
                     <div style="display:flex;gap:12px;flex-wrap:wrap;">
-                        <button type="submit" class="btn btn-primary">Submit Request</button>
-                        <a href="my_requests.php" class="btn btn-ghost">Cancel</a>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <a href="my_requests.php" class="btn btn-ghost">Cancel Editing</a>
                     </div>
                 </form>
             </div>
-            <?php endif; ?>
         </div>
 
         <!-- STOCK SIDEBAR -->
@@ -205,9 +199,6 @@ $patients  = mysqli_query($conn, "SELECT Patient_Disease_ID, Name, Disease_Name 
                 </div>
                 <?php endforeach; ?>
             </div>
-            <p style="font-size:.75rem;color:var(--muted);margin-top:10px;">
-                Updated in real-time from the blood bank database.
-            </p>
         </div>
 
     </div>
