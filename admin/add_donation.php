@@ -4,6 +4,7 @@ if (!isset($_SESSION['admin'])) { header("Location: login.php"); exit(); }
 $donors = mysqli_query($conn,"SELECT * FROM donor ORDER BY Name");
 $success=$error='';
 if (isset($_POST['submit'])) {
+    csrf_check();
     $did  = (int)$_POST['donor_id'];
     $bg   = mysqli_real_escape_string($conn,$_POST['blood_group']);
     $units= (int)$_POST['units'];
@@ -22,7 +23,7 @@ if (isset($_POST['submit'])) {
     <div class="page-header"><h1>Record Donation</h1><a href="view_donations.php" class="btn btn-secondary">← History</a></div>
     <?php if ($success): ?><div class="alert alert-success"><?php echo $success; ?></div><?php endif; ?>
     <?php if ($error):   ?><div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
-    <div class="form-card"><form method="POST">
+    <div class="form-card"><form method="POST"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
         <div class="form-group"><label>Donor <span class="req">*</span></label>
             <select name="donor_id" required><option value="">— Select Donor —</option>
             <?php while($d=mysqli_fetch_assoc($donors)): ?><option value="<?php echo $d['Donor_ID']; ?>"><?php echo htmlspecialchars($d['Name']); ?> (<?php echo $d['Blood_Group']; ?>)</option><?php endwhile; ?>

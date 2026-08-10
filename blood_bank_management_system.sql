@@ -19,7 +19,8 @@ CREATE TABLE IF NOT EXISTS `admin` (
   PRIMARY KEY (`Admin_ID`),
   UNIQUE KEY `uq_username` (`Username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-INSERT IGNORE INTO `admin` (`Username`,`Password`) VALUES ('admin','admin123');
+-- Password hash below is bcrypt('admin123') — verified via PHP password_verify(), not stored/compared in plaintext.
+INSERT IGNORE INTO `admin` (`Username`,`Password`) VALUES ('admin','$2y$10$M83jPaO2ntLLx5MHpRlyF.Q0iz992b9VgriOZGDUdm4v4PKr4/PX6');
 
 -- STAFF
 CREATE TABLE IF NOT EXISTS `staff` (
@@ -143,8 +144,9 @@ CREATE TABLE IF NOT EXISTS `user` (
   KEY `fk_user_hospital` (`Hospital_ID`),
   CONSTRAINT `fk_user_hospital` FOREIGN KEY (`Hospital_ID`) REFERENCES `hospital` (`Hospital_ID`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- Password hash below is bcrypt('user123') — verified via PHP password_verify(), not stored/compared in plaintext.
 INSERT IGNORE INTO `user` (`Full_Name`,`Email`,`Password`,`Phone`,`Blood_Group`,`Address`,`Hospital_ID`,`Date_Registered`) VALUES
-('Demo User','user@demo.com','user123','01700000099','A+','Sylhet',1,CURDATE());
+('Demo User','user@demo.com','$2y$10$YNkwuWXtMsafLyQ8tuVx0./kORo/WKiXfJUlLGJ3FYIIz6SNudRhS','01700000099','A+','Sylhet',1,CURDATE());
 
 -- REQUEST
 CREATE TABLE IF NOT EXISTS `request` (

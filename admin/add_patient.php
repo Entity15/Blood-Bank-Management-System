@@ -3,6 +3,7 @@ include 'config.php';
 if (!isset($_SESSION['admin'])) { header("Location: login.php"); exit(); }
 $success=$error='';
 if (isset($_POST['submit'])) {
+    csrf_check();
     $pid  = (int)$_POST['patient_id'];
     $name = mysqli_real_escape_string($conn,$_POST['name']);
     $dis  = mysqli_real_escape_string($conn,$_POST['disease_name']);
@@ -24,7 +25,7 @@ if (isset($_POST['submit'])) {
     <p style="color:var(--gray-600);margin-bottom:16px;font-size:.9rem;">Each row represents one patient–disease combination. The same Patient ID can appear multiple times for different conditions.</p>
     <?php if ($success): ?><div class="alert alert-success"><?php echo $success; ?></div><?php endif; ?>
     <?php if ($error):   ?><div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
-    <div class="form-card"><form method="POST">
+    <div class="form-card"><form method="POST"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
         <div class="form-row">
             <div class="form-group"><label>Patient ID <span class="req">*</span></label><input type="number" name="patient_id" min="1" required placeholder="Numeric patient identifier"></div>
             <div class="form-group"><label>Full Name <span class="req">*</span></label><input type="text" name="name" required placeholder="Patient full name"></div>

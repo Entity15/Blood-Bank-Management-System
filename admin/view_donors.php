@@ -27,7 +27,11 @@ $result = mysqli_query($conn, "SELECT * FROM donor $where ORDER BY Name");
         <td><?php echo $r['Date_Joined']; ?></td>
         <td>
             <a class="abtn edit" href="edit_donor.php?id=<?php echo $r['Donor_ID']; ?>">Edit</a>
-            <a class="abtn del" href="delete_donor.php?id=<?php echo $r['Donor_ID']; ?>" onclick="return confirm('Delete this donor?');">Delete</a>
+            <form method="POST" action="delete_donor.php" style="display:inline" onsubmit="return confirm('Delete this donor?');">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrf_token()); ?>">
+                <input type="hidden" name="id" value="<?php echo $r['Donor_ID']; ?>">
+                <button type="submit" class="abtn del" style="border:none;cursor:pointer;font:inherit;">Delete</button>
+            </form>
         </td>
     </tr>
     <?php endwhile; if($n===0): ?><tr><td colspan="8" class="empty">No donors found.</td></tr><?php endif; ?>

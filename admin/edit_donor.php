@@ -6,6 +6,7 @@ $r = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM donor WHERE Donor_ID=
 if (!$r) { header("Location: view_donors.php"); exit(); }
 $success=$error='';
 if (isset($_POST['update'])) {
+    csrf_check();
     $name=$_POST['name']; $age=(int)$_POST['age']; $phone=$_POST['phone']; $bg=$_POST['blood_group'];
     $str=$_POST['street']; $city=$_POST['city']; $state=$_POST['state']; $pin=$_POST['pin_code']; $dj=$_POST['date_joined'];
     foreach(['name','phone','bg','str','city','state','pin','dj'] as $v) $$v = mysqli_real_escape_string($conn, $$v);
@@ -21,7 +22,7 @@ $bgroups=['A+','A-','B+','B-','AB+','AB-','O+','O-'];
     <div class="page-header"><h1>Edit Donor</h1><a href="view_donors.php" class="btn btn-secondary">← Back</a></div>
     <?php if ($success): ?><div class="alert alert-success"><?php echo $success; ?></div><?php endif; ?>
     <?php if ($error):   ?><div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
-    <div class="form-card"><form method="POST">
+    <div class="form-card"><form method="POST"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
         <div class="form-row">
             <div class="form-group"><label>Full Name</label><input type="text" name="name" value="<?php echo htmlspecialchars($r['Name']); ?>" required></div>
             <div class="form-group"><label>Blood Group</label><select name="blood_group"><?php foreach($bgroups as $b): ?><option<?php echo $r['Blood_Group']===$b?' selected':''; ?>><?php echo $b; ?></option><?php endforeach; ?></select></div>

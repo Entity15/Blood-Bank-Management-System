@@ -4,8 +4,9 @@ if (!isset($_SESSION['admin'])) { header("Location: login.php"); exit(); }
 $msg=$error='';
 
 // Approve — find a matching donation, link via donation_to_request, update status
-if (isset($_GET['approve'])) {
-    $rid = (int)$_GET['approve'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['approve'])) {
+    csrf_check();
+    $rid = (int)$_POST['approve'];
     $req = mysqli_fetch_assoc(mysqli_query($conn,"SELECT * FROM request WHERE Request_ID=$rid"));
     if ($req && $req['Status']==='Pending') {
         $bg   = mysqli_real_escape_string($conn, $req['Blood_Group']);
@@ -41,8 +42,9 @@ if (isset($_GET['approve'])) {
         }
     }
 }
-if (isset($_GET['reject'])) {
-    $rid=(int)$_GET['reject'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['reject'])) {
+    csrf_check();
+    $rid=(int)$_POST['reject'];
     mysqli_query($conn,"UPDATE request SET Status='Rejected' WHERE Request_ID=$rid");
     $msg="Request #$rid rejected.";
 }
@@ -78,8 +80,16 @@ $result = mysqli_query($conn,"
         <td><span class="stag <?php echo $sc; ?>"><?php echo $r['Status']; ?></span></td>
         <td>
         <?php if($r['Status']==='Pending'): ?>
-            <a class="abtn edit" href="?approve=<?php echo $r['Request_ID']; ?>" onclick="return confirm('Approve this request?');">Approve</a>
-            <a class="abtn del"  href="?reject=<?php echo $r['Request_ID']; ?>"  onclick="return confirm('Reject?');">Reject</a>
+            <form method="POST" style="display:inline" onsubmit="return confirm('Approve this request?');">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrf_token()); ?>">
+                <input type="hidden" name="approve" value="<?php echo $r['Request_ID']; ?>">
+                <button type="submit" class="abtn edit" style="border:none;cursor:pointer;font:inherit;">Approve</button>
+            </form>
+            <form method="POST" style="display:inline" onsubmit="return confirm('Reject?');">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrf_token()); ?>">
+                <input type="hidden" name="reject" value="<?php echo $r['Request_ID']; ?>">
+                <button type="submit" class="abtn del" style="border:none;cursor:pointer;font:inherit;">Reject</button>
+            </form>
         <?php else: ?><span class="muted">—</span><?php endif; ?>
         </td>
     </tr>

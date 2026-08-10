@@ -6,7 +6,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 if (isset($_SESSION['admin']))   { header("Location: admin/dashboard.php");  exit(); }
 if (isset($_SESSION['user_id'])) { header("Location: user/dashboard.php");   exit(); }
 
-$conn  = mysqli_connect("localhost","root","","blood_bank_management_system");
+require_once __DIR__ . '/includes/db.php';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -15,9 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // 1️⃣ Check admin table (username match)
     $adminRow = mysqli_fetch_assoc(mysqli_query($conn,
-        "SELECT * FROM admin WHERE Username='$identifier' AND Password='$password' LIMIT 1"));
+        "SELECT * FROM admin WHERE Username='$identifier' LIMIT 1"));
 
-    if ($adminRow) {
+    if ($adminRow && password_verify($password, $adminRow['Password'])) {
         $_SESSION['admin'] = $adminRow['Username'];
         header("Location: admin/dashboard.php"); exit();
     }
@@ -26,7 +26,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $userRow = mysqli_fetch_assoc(mysqli_query($conn,
         "SELECT u.*, h.Name AS HospName FROM user u
          LEFT JOIN hospital h ON u.Hospital_ID=h.Hospital_ID
-         WHERE u.Email='$identifier' AND u.Password='$password' LIMIT 1"));
+         WHERE u.Email='$identifier' LIMIT 1"));
+
+    if ($userRow && !password_verify($password, $userRow['Password'])) {
+        $userRow = null;
+    }
 
     if ($userRow) {
         $_SESSION['user_id']      = $userRow['User_ID'];

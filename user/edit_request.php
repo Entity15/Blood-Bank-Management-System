@@ -32,7 +32,7 @@ $stock_res = mysqli_query($conn, "
                         FROM donation_to_request dtr
                         JOIN donation d2 ON dtr.Donation_ID=d2.Donation_ID
                         JOIN blood b2    ON d2.Blood_ID=b2.Blood_ID
-                        WHERE b2.Blood_Group=b.Blood_Group),0) AS Available
+                        WHERE b2.Blood_Group=b.Blood_Group AND b2.Expiry_Date >= CURDATE()),0) AS Available
     FROM blood b WHERE b.Expiry_Date >= CURDATE()
     GROUP BY b.Blood_Group");
 while ($r = mysqli_fetch_assoc($stock_res)) $stock[$r['Blood_Group']] = max(0,(int)$r['Available']);
@@ -46,6 +46,7 @@ $patients = mysqli_query($conn, "SELECT Patient_Disease_ID, Name, Disease_Name F
 $pcount   = mysqli_num_rows($patients);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
     $hid  = (int)$_POST['hospital_id'];
     $pid  = (int)$_POST['patient_id'];
     $bg   = mysqli_real_escape_string($conn, $_POST['blood_group']);
@@ -117,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php endif; ?>
 
             <div class="form-card">
-                <form method="POST">
+                <form method="POST"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
                     <input type="hidden" name="request_id" value="<?= $req['Request_ID'] ?>">
                     <div class="form-row">
                         <div class="form-group">
@@ -154,14 +155,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <select name="blood_group" class="form-select" required>
                                 <option value="">— Select —</option>
                                 <?php foreach(['A+','A-','B+','B-','AB+','AB-','O+','O-'] as $g):
-<<<<<<< HEAD
-                                    $sel = ($req['Blood_Group'] === $g) ? 'selected' : '';
-                                ?>
-                                <option value="<?= $g ?>" <?= $sel ?>><?= $g ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                            <p class="form-hint">Requests for groups currently out of stock will be blocked on submission — check the live stock panel to the right.</p>
-=======
                                     $avail = $stock[$g] ?? 0;
                                     $sel   = ($req['Blood_Group'] === $g) ? 'selected' : '';
                                     $warn  = $avail === 0 ? ' ⚠ Out of stock' : ($avail < 5 ? " ($avail units – low)" : " ($avail units)");
@@ -170,7 +163,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <?php endforeach; ?>
                             </select>
                             <p class="form-hint">Stock levels shown — requests for out-of-stock groups will be blocked.</p>
->>>>>>> 414c7de8f4fcf70468b3105d2807f68bd9842592
                         </div>
                         <div class="form-group">
                             <label class="form-label">Units Required <span class="req">*</span></label>

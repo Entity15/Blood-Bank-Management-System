@@ -13,7 +13,7 @@ $res = mysqli_query($conn, "
                      FROM donation_to_request dtr
                      JOIN donation d2 ON dtr.Donation_ID=d2.Donation_ID
                      JOIN blood b2    ON d2.Blood_ID=b2.Blood_ID
-                     WHERE b2.Blood_Group=b.Blood_Group),0) AS Fulfilled
+                     WHERE b2.Blood_Group=b.Blood_Group AND b2.Expiry_Date >= CURDATE()),0) AS Fulfilled
     FROM blood b WHERE b.Expiry_Date >= CURDATE()
     GROUP BY b.Blood_Group");
 while ($r = mysqli_fetch_assoc($res)) {

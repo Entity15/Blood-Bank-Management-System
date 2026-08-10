@@ -15,7 +15,7 @@ $stock_res = mysqli_query($conn, "
                         FROM donation_to_request dtr
                         JOIN donation d2 ON dtr.Donation_ID=d2.Donation_ID
                         JOIN blood b2    ON d2.Blood_ID=b2.Blood_ID
-                        WHERE b2.Blood_Group=b.Blood_Group),0) AS Available
+                        WHERE b2.Blood_Group=b.Blood_Group AND b2.Expiry_Date >= CURDATE()),0) AS Available
     FROM blood b WHERE b.Expiry_Date >= CURDATE()
     GROUP BY b.Blood_Group");
 while ($r = mysqli_fetch_assoc($stock_res)) $stock[$r['Blood_Group']] = max(0,(int)$r['Available']);
@@ -39,6 +39,7 @@ $patients = mysqli_query($conn, "SELECT Patient_Disease_ID, Name, Disease_Name F
 $pcount   = mysqli_num_rows($patients);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
     $hid = (int)$_POST['hospital_id'];
     $pid = (int)$_POST['patient_id'];
     $bg  = mysqli_real_escape_string($conn, $_POST['blood_group']);
@@ -118,7 +119,7 @@ $patients  = mysqli_query($conn, "SELECT Patient_Disease_ID, Name, Disease_Name 
 
             <?php if (!$success): ?>
             <div class="form-card">
-                <form method="POST">
+                <form method="POST"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">Hospital <span class="req">*</span></label>

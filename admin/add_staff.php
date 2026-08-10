@@ -3,6 +3,7 @@ include 'config.php';
 if (!isset($_SESSION['admin'])) { header("Location: login.php"); exit(); }
 $success=$error='';
 if (isset($_POST['submit'])) {
+    csrf_check();
     $name   = mysqli_real_escape_string($conn,$_POST['name']);
     $phone  = mysqli_real_escape_string($conn,$_POST['phone']);
     $role   = mysqli_real_escape_string($conn,$_POST['role']);
@@ -18,7 +19,7 @@ if (isset($_POST['submit'])) {
     <div class="page-header"><h1>Add Staff</h1><a href="view_staff.php" class="btn btn-secondary">← Back</a></div>
     <?php if ($success): ?><div class="alert alert-success"><?php echo $success; ?></div><?php endif; ?>
     <?php if ($error):   ?><div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
-    <div class="form-card"><form method="POST">
+    <div class="form-card"><form method="POST"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
         <div class="form-row">
             <div class="form-group"><label>Full Name <span class="req">*</span></label><input type="text" name="name" required></div>
             <div class="form-group"><label>Role</label><input type="text" name="role" placeholder="e.g. Technician, Manager"></div>

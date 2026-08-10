@@ -11,6 +11,7 @@ $row = mysqli_fetch_assoc(mysqli_query($conn,
     "SELECT u.*,h.Name AS HospName FROM user u LEFT JOIN hospital h ON u.Hospital_ID=h.Hospital_ID WHERE u.User_ID=$uid"));
 
 if ($_SERVER['REQUEST_METHOD']==='POST') {
+    csrf_check();
     $name  = mysqli_real_escape_string($conn, trim($_POST['full_name']));
     $phone = mysqli_real_escape_string($conn, trim($_POST['phone']??''));
     // Blood group can only be SET once (when it's currently empty). Once a value
@@ -28,11 +29,11 @@ if ($_SERVER['REQUEST_METHOD']==='POST') {
         } elseif (strlen($_POST['new_password']) < 6) {
             $error="Password must be at least 6 characters.";
         } else {
-            $np  = mysqli_real_escape_string($conn,$_POST['new_password']);
-            $cur = mysqli_real_escape_string($conn,$_POST['current_password']??'');
-            if ($row['Password'] !== $cur) {
+            $cur = $_POST['current_password'] ?? '';
+            if (!password_verify($cur, $row['Password'])) {
                 $error="Current password is incorrect.";
             } else {
+                $np = mysqli_real_escape_string($conn, password_hash($_POST['new_password'], PASSWORD_DEFAULT));
                 $pass_sql=", Password='$np'";
             }
         }
@@ -108,7 +109,7 @@ $my_approved = mysqli_fetch_row(mysqli_query($conn,"SELECT COUNT(*) FROM request
             <div class="form-card" style="max-width:100%;">
                 <div class="sec-eyebrow">Account</div>
                 <h2 class="sec-title" style="margin-bottom:20px;">Edit Details</h2>
-                <form method="POST">
+                <form method="POST"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label">Full Name <span class="req">*</span></label>

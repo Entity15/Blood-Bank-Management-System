@@ -16,7 +16,13 @@ $result = mysqli_query($conn,"SELECT * FROM staff ORDER BY Name");
         <td><?php echo htmlspecialchars($r['Role']); ?></td>
         <td><?php echo htmlspecialchars($r['Phone']); ?></td>
         <td><?php echo number_format($r['Salary'],2); ?></td>
-        <td><a class="abtn del" href="delete_staff.php?id=<?php echo $r['Staff_ID']; ?>" onclick="return confirm('Delete this staff member?');">Delete</a></td>
+        <td>
+            <form method="POST" action="delete_staff.php" style="display:inline" onsubmit="return confirm('Delete this staff member?');">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars(csrf_token()); ?>">
+                <input type="hidden" name="id" value="<?php echo $r['Staff_ID']; ?>">
+                <button type="submit" class="abtn del" style="border:none;cursor:pointer;font:inherit;">Delete</button>
+            </form>
+        </td>
     </tr>
     <?php endwhile; if($n===0): ?><tr><td colspan="6" class="empty">No staff found.</td></tr><?php endif; ?>
     </tbody></table>

@@ -7,16 +7,16 @@ $error = $success = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name  = trim(mysqli_real_escape_string($conn, $_POST['full_name']));
     $email = trim(mysqli_real_escape_string($conn, $_POST['email']));
-    $pass  = mysqli_real_escape_string($conn, $_POST['password']);
+    $pass_raw = $_POST['password'];
     $pass2 = $_POST['password2'];
     $phone = mysqli_real_escape_string($conn, trim($_POST['phone'] ?? ''));
     $bg    = mysqli_real_escape_string($conn, $_POST['blood_group'] ?? '');
     $addr  = mysqli_real_escape_string($conn, trim($_POST['address'] ?? ''));
     $hid   = (int)($_POST['hospital_id'] ?? 0);
 
-    if (!$name || !$email || !$pass)            $error = "Name, email and password are required.";
-    elseif ($_POST['password'] !== $pass2)      $error = "Passwords do not match.";
-    elseif (strlen($_POST['password']) < 6)     $error = "Password must be at least 6 characters.";
+    if (!$name || !$email || !$pass_raw)         $error = "Name, email and password are required.";
+    elseif ($pass_raw !== $pass2)                $error = "Passwords do not match.";
+    elseif (strlen($pass_raw) < 6)                $error = "Password must be at least 6 characters.";
     else {
         $exists = mysqli_fetch_row(mysqli_query($conn, "SELECT COUNT(*) FROM user WHERE Email='$email'"))[0];
         if ($exists) {
@@ -25,9 +25,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $today  = date('Y-m-d');
             $hval   = $hid ? $hid : 'NULL';
             $bgval  = $bg  ? "'$bg'" : 'NULL';
+            $pass_hash = mysqli_real_escape_string($conn, password_hash($pass_raw, PASSWORD_DEFAULT));
             $r = mysqli_query($conn,
                 "INSERT INTO user (Full_Name,Email,Password,Phone,Blood_Group,Address,Hospital_ID,Date_Registered)
-                 VALUES ('$name','$email','$pass','$phone',$bgval,'$addr',$hval,'$today')");
+                 VALUES ('$name','$email','$pass_hash','$phone',$bgval,'$addr',$hval,'$today')");
             if ($r) {
                 $success = "Account created! You can now log in.";
             } else {

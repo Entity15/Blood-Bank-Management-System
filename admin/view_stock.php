@@ -5,7 +5,7 @@ if (!isset($_SESSION['admin'])) { header("Location: login.php"); exit(); }
 $result = mysqli_query($conn,"
     SELECT b.Blood_Group,
            COALESCE(SUM(b.Units),0) AS Total_Donated,
-           COALESCE((SELECT SUM(dtr.Units_Provided) FROM donation_to_request dtr JOIN donation d2 ON dtr.Donation_ID=d2.Donation_ID JOIN blood b2 ON d2.Blood_ID=b2.Blood_ID WHERE b2.Blood_Group=b.Blood_Group),0) AS Total_Fulfilled
+           COALESCE((SELECT SUM(dtr.Units_Provided) FROM donation_to_request dtr JOIN donation d2 ON dtr.Donation_ID=d2.Donation_ID JOIN blood b2 ON d2.Blood_ID=b2.Blood_ID WHERE b2.Blood_Group=b.Blood_Group AND b2.Expiry_Date >= CURDATE()),0) AS Total_Fulfilled
     FROM blood b
     WHERE b.Expiry_Date >= CURDATE()
     GROUP BY b.Blood_Group

@@ -130,6 +130,7 @@ $total = mysqli_fetch_row(mysqli_query($conn, "SELECT COUNT(*) FROM request r $w
                         <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
                             <a href="edit_request.php?id=<?= $r['Request_ID'] ?>" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;">Edit</a>
                             <form method="POST" action="cancel_request.php" onsubmit="return confirm('Cancel this blood request? This cannot be undone.');" style="width:100%;">
+                                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
                                 <button type="submit" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;">Cancel</button>
                                 <input type="hidden" name="request_id" value="<?= $r['Request_ID'] ?>">
                             </form>

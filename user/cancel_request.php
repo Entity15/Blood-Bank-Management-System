@@ -7,6 +7,7 @@ $uid = $u['id'];
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || empty($_POST['request_id'])) {
     header("Location: my_requests.php"); exit();
 }
+csrf_check();
 
 $rid = (int)$_POST['request_id'];
 

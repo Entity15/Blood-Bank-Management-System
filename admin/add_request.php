@@ -5,6 +5,7 @@ $hospitals = mysqli_query($conn,"SELECT * FROM hospital ORDER BY Name");
 $patients  = mysqli_query($conn,"SELECT * FROM patient ORDER BY Name, Disease_Name");
 $success=$error='';
 if (isset($_POST['submit'])) {
+    csrf_check();
     $hid = (int)$_POST['hospital_id'];
     $pid = (int)$_POST['patient_id'];
     $bg  = mysqli_real_escape_string($conn,$_POST['blood_group']);
@@ -21,7 +22,7 @@ if (isset($_POST['submit'])) {
     <div class="page-header"><h1>New Blood Request</h1><a href="view_requests.php" class="btn btn-secondary">← All Requests</a></div>
     <?php if ($success): ?><div class="alert alert-success"><?php echo $success; ?></div><?php endif; ?>
     <?php if ($error):   ?><div class="alert alert-error"><?php echo htmlspecialchars($error); ?></div><?php endif; ?>
-    <div class="form-card"><form method="POST">
+    <div class="form-card"><form method="POST"><input type="hidden" name="csrf_token" value="<?= htmlspecialchars(csrf_token()) ?>">
         <div class="form-row">
             <div class="form-group"><label>Hospital <span class="req">*</span></label>
                 <select name="hospital_id" required><option value="">— Select Hospital —</option>
